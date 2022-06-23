@@ -11,29 +11,36 @@
 
 Rainbond 是一个云原生多云应用管理平台，使用简单，不需要懂容器、Kubernetes和底层复杂技术，支持管理多个Kubernetes集群，和管理企业应用全生命周期。主要功能包括应用开发环境、应用市场、微服务架构、应用交付、应用运维、应用级多云管理等。
 
-## 为什么选择 Rainbond ?
+### 为什么选择 Rainbond？
 
-Kubernetes 作为一个管理容器化应用程序的系统。它为应用程序的部署、维护和扩展提供了基本机制。但是在用户传统应用向云原生应用转型时，使用 Kubernetes 会遇到如下几个问题：
+<details>
+  <summary<b>使用简单</b></summary>
+	Rainbond 遵循 以应用为中心 的设计理念，统一封装容器、Kubernetes和底层基础设施相关技术，让使用者专注于业务本身, 避免在业务以外技术上花费大量学习和管理精力。同时，Rainbond 深度整合应用开发、微服务架构、应用交付、应用运维、资源管理，管理高度自动化，实现统一管理所有应用、所有基础设施和所有IT流程。
+</details>
+<details>
+  <summary<b>一步将传统应用变成云原生应用</b></summary>
+	Rainbond 通过“无侵入”技术，让传统应用不需要改动或少量改动就能快速变成云原生应用。 传统应用转成成云原生应用的方式：
+  <ul>
+    <li>有源代码和软件包的应用，平台自动识别开发语言类型和包类型，不改变开发者习惯，代码直接编译、构建成支持云原生特性的应用。</li>
+  	<li>对于想实现微服务架构的传统应用，Rainbond提供Service Mesh 微服务架构，应用不改代码就能变成微服务架构。</li>
+  	<li>传统应用想要扩展运维和治理功能，Rainbond提供“无侵入”的插件，按需加载插件，开启运维和服务治理能力。</li>
+	</ul>
+</details>
 
-- 企业应用容器化部署
-- Kubernetes 学习曲线陡峭
-- 部署好的应用如何在其他 Kubernetes 环境中交付、升级
 
-Rainbond 遵循 **以应用为中心** 的设计理念，统一封装容器、Kubernetes 和底层基础设施相关技术，让使用者专注于业务本身, 避免在业务以外技术上花费大量学习和管理精力。
 
-- Rainbond 支持[一步将企业应用变成云原生应用](https://www.rainbond.com/docs/#2%E4%B8%80%E6%AD%A5%E5%B0%86%E4%BC%A0%E7%BB%9F%E5%BA%94%E7%94%A8%E5%8F%98%E6%88%90%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8)
-- Rainbond 不需要了解 Kubernetes，并且可通过 [Web 界面快速安装 Kubernetes](https://www.rainbond.com/docs/quick-start/quick-install#%E5%9F%BA%E4%BA%8E-web-%E7%95%8C%E9%9D%A2%E5%AE%89%E8%A3%85) ，支持管理多个 Kubernetes 集群
-- Rainbond 支持多云交付、私有交付、SaaS交付、离线交付、个性化交付、应用市场等，实现各种交付流程自动化，可参考文章 [企业应用一键安装与升级](https://mp.weixin.qq.com/s/2chigbtp8TzPdvJM4o7sOw)
 
-## Rainbond 的功能和架构
+
+### Rainbond 的功能和架构
 
 ![Rainbond-Arch](https://grstatic.oss-cn-shanghai.aliyuncs.com/case/2022/03/17/16474283190784.jpg)
 
-Rainbond 基于公有云、私有云、自建 Kubernetes 对企业应用进行管理，支持[应用级多云管理](https://www.rainbond.com/docs/#%E5%BA%94%E7%94%A8%E7%BA%A7%E5%A4%9A%E4%BA%91%E7%AE%A1%E7%90%86)。
+<details>
+  <summary<b>123</b></summary>
+	123
+</details>
 
-Rainbond 支持应用的[全生命周期管理](https://www.rainbond.com/docs/#%E5%BA%94%E7%94%A8%E5%85%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86)，即开发、架构、交付、运维一站式打通。
 
-Rainbond 中的组件是独立运行、可复用、可扩展、可集成的单元，支持不同的粒度大小，支持版本管理，组件可以在不同应用场景中复用，组件自身可以迭代升级，积累的组件统一存放到组件库，实现了企业[数字化能力积累和复用](https://www.rainbond.com/docs/#3%E5%AE%9E%E7%8E%B0%E6%95%B0%E5%AD%97%E5%8C%96%E8%83%BD%E5%8A%9B%E7%A7%AF%E7%B4%AF%E5%92%8C%E5%A4%8D%E7%94%A8)。
 
 ## 安装
 Rainbond 支持多种安装方式。你可以通过以下命令安装 Allinone 版本，快速体验 Rainbond 完整功能。
