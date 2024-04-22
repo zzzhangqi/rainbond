@@ -1,0 +1,96 @@
+name: yx
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'branch'
+        required: false
+        default: 'main'
+      version_user:
+        description: 'version_user'
+        required: true
+      version_admin:
+        description: 'version_admin'
+        required: true
+      is_yx_or_test:
+        description: 'is_yx_or_test'
+        required: true
+        type: choice
+        options:
+        - yx
+        - test
+env:
+  GITLAB_CLONE_URL: ${{ secrets.GITLAB_CLONE_URL }}
+
+jobs:
+  build-user:
+    runs-on: ubuntu-22.04
+    environment: yx
+    steps:
+      - name: build user ui
+        env:
+          BUILD_RBD_APP_UI: false
+          ALLINONE: ${{ vars.ALLINONE }}
+          ROUTE_MODE: ${{ vars.ROUTE_MODE }}
+          VERSION: ${{ github.event.inputs.version_user }}
+        run: |
+          git clone -b ${{ github.event.inputs.branch }} $GITLAB_CLONE_URL/rainbond-ui-cloud.git && cd rainbond-ui-cloud
+          sed -i "s|^const yanxiangType.*|const yanxiangType = 'user';|" config/api.config.js
+          if [ ${{ github.event.inputs.is_yx_or_test }} == 'yx' ];then
+            sed -i "s|^const baseUrl.*|const baseUrl = 'https://91iam-gateway.9n1m.com/appstore-user/api';|" config/api.config.js
+          fi
+          chmod +x ./build.sh && ./build.sh
+          docker build -t rainbond/rainbond-ui:$VERSION .
+
+      - name: build user allinone
+        env:
+          TRAVIS_PULL_REQUEST: false
+          ADAPTOR_BRANCH: ${{ vars.ADAPTOR_BRANCH}}
+          BUILD_ARCH: ${{ vars.BUILD_ARCH}}
+          # GitLab
+          DOMESTIC_DOCKER_USERNAME: ${{ vars.DOMESTIC_DOCKER_USERNAME }}
+          DOMESTIC_DOCKER_PASSWORD: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
+          DOMESTIC_BASE_NAME: ${{ vars.DOMESTIC_BASE_NAME }}
+          DOMESTIC_NAMESPACE: ${{ vars.DOMESTIC_NAMESPACE }}
+          VERSION: ${{ github.event.inputs.version_user }}
+        run: |
+          git clone -b ${{ github.event.inputs.branch }} $GITLAB_CLONE_URL/rainbond-console-cloud.git
+          cd rainbond-console-cloud
+          chmod +x  ./release.sh
+          ./release.sh allinone
+
+  build-admin:
+    runs-on: ubuntu-22.04
+    environment: yx
+    steps:
+      - name: build admin ui
+        env:
+          BUILD_RBD_APP_UI: false
+          ALLINONE: ${{ vars.ALLINONE }}
+          ROUTE_MODE: ${{ vars.ROUTE_MODE }}
+          VERSION: ${{ github.event.inputs.version_admin }}
+        run: |
+          git clone -b ${{ github.event.inputs.branch }} $GITLAB_CLONE_URL/rainbond-ui-cloud.git && cd rainbond-ui-cloud
+          sed -i "s|^const yanxiangType.*|const yanxiangType = 'admin';|" config/api.config.js
+          if [ ${{ github.event.inputs.is_yx_or_test }} == 'yx' ];then
+            sed -i "s|^const baseUrl.*|const baseUrl = 'https://91iam-mgmt-gateway.9n1m.com/appstore-admin/api';|" config/api.config.js
+          fi
+          chmod +x ./build.sh && ./build.sh
+          docker build -t rainbond/rainbond-ui:$VERSION .
+
+      - name: build admin allinone
+        env:
+          TRAVIS_PULL_REQUEST: false
+          ADAPTOR_BRANCH: ${{ vars.ADAPTOR_BRANCH}}
+          BUILD_ARCH: ${{ vars.BUILD_ARCH}}
+          # GitLab
+          DOMESTIC_DOCKER_USERNAME: ${{ vars.DOMESTIC_DOCKER_USERNAME }}
+          DOMESTIC_DOCKER_PASSWORD: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
+          DOMESTIC_BASE_NAME: ${{ vars.DOMESTIC_BASE_NAME }}
+          DOMESTIC_NAMESPACE: ${{ vars.DOMESTIC_NAMESPACE }}
+          VERSION: ${{ github.event.inputs.version_admin }}
+        run: |
+          git clone -b ${{ github.event.inputs.branch }} $GITLAB_CLONE_URL/rainbond-console-cloud.git
+          cd rainbond-console-cloud
+          chmod +x  ./release.sh
+          ./release.sh allinone
