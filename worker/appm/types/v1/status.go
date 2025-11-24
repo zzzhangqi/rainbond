@@ -121,8 +121,9 @@ func conversionThirdComponent(obj runtime.Object) *v1alpha1.ThirdComponent {
 
 // GetServiceStatus get service status
 func (a *AppService) GetServiceStatus() string {
+	// Handle KubeBlocks components by querying their Cluster CRD status
 	if a.ServiceType == TypeKubeBlocks {
-		return RUNNING
+		return a.getKubeBlocksStatus()
 	}
 
 	if a.IsThirdComponent() {
@@ -445,4 +446,50 @@ func (a AbnormalInfo) Hash() string {
 func (a AbnormalInfo) String() string {
 	return fmt.Sprintf("ServiceID: %s;ServiceAlias: %s;PodName: %s ; ContainerName: %s; Reason: %s; Message: %s",
 		a.ServiceID, a.ServiceAlias, a.PodName, a.ContainerName, a.Reason, a.Message)
+}
+
+// getKubeBlocksStatus retrieves the status of a KubeBlocks component
+// For now, we use pod-based status detection since KubeBlocks manages the workload lifecycle
+// In the future, this can be enhanced to query the KubeBlocks Cluster CRD directly
+func (a *AppService) getKubeBlocksStatus() string {
+	return a.getPodBasedStatus()
+}
+
+// getPodBasedStatus falls back to detecting status from pods
+func (a *AppService) getPodBasedStatus() string {
+	if a == nil {
+		return CLOSED
+	}
+	if a.IsClosed() {
+		return CLOSED
+	}
+	if len(a.pods) == 0 {
+		return STARTING
+	}
+
+	// Check if all pods are running
+	runningCount := 0
+	for _, pod := range a.pods {
+		if pod.Status.Phase == corev1.PodRunning {
+			// Check if all containers are ready
+			allReady := true
+			for _, status := range pod.Status.ContainerStatuses {
+				if !status.Ready {
+					allReady = false
+					break
+				}
+			}
+			if allReady {
+				runningCount++
+			}
+		}
+	}
+
+	if runningCount == len(a.pods) && runningCount > 0 {
+		return RUNNING
+	}
+	if runningCount > 0 {
+		return SOMEABNORMAL
+	}
+	return STARTING
 }
